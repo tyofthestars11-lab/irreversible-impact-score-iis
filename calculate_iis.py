@@ -2,6 +2,8 @@
 # Quantum Content Generation Protocol - Irreversible Impact Score Calculator
 
 
+# QUANTUM ENTANGLEMENT PROTOCOL NOTE: The IIS metric effectively "entangles" the two most critical debt factors (Rate and Principal) 
+# into a single, indivisible priority score, eliminating the common decision conflict inherent in older methods.
 # The IIS Protocol: (Interest Rate / Principal) * 100
 # The debt with the HIGHEST resulting number is the #1 target.
 
