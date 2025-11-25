@@ -22,7 +22,7 @@ import sys
 def _normalize_rate(rate: float) -> float:
     """Normalize rate so it is a decimal (e.g., 0.08 for 8%)."""
     if rate < 0:
-        raise ValueError("Rate must be non-negative.")
+        raise ValueError("Rate must not be negative.")
     # Heuristic: if rate > 1, assume it's given as a percentage (e.g., 8)
     if rate > 1:
         return rate / 100.0
@@ -44,12 +44,12 @@ def calculate_iis(principal: float, rate: float, rate_is_percent: Optional[bool]
         IIS as a float.
 
     Raises:
-        ValueError for invalid inputs.
+        ValueError for invalid inputs (negative principal or negative rate).
     """
     if principal <= 0:
         raise ValueError("Principal must be greater than zero.")
-    if rate <= 0:
-        raise ValueError("Rate must be greater than zero.")
+    if rate < 0:
+        raise ValueError("Rate must not be negative.")
 
     if rate_is_percent is True:
         r = rate / 100.0
@@ -100,9 +100,18 @@ def main(argv=None):
         if args.principal is None or args.rate is None:
             parser.error("Either --examples or both --principal and --rate must be provided.")
 
-        iis = calculate_iis(args.principal, args.rate, rate_is_percent=args.percent)
+        # Use heuristic unless --percent is explicitly provided
+        rate_flag = True if args.percent else None
+        iis = calculate_iis(args.principal, args.rate, rate_is_percent=rate_flag)
+
+        # For display, show the normalized rate as a percent
+        if args.percent:
+            display_rate = args.rate / 100.0
+        else:
+            display_rate = _normalize_rate(args.rate)
+
         print("--- IIS CALCULATION PROTOCOL ENGAGED ---")
-        print(f"Debt (P: {_format_currency(args.principal)} | R: {args.rate}{'%' if args.percent else ''}) -> IIS: {iis:.6f}")
+        print(f"Debt (P: {_format_currency(args.principal)} | R: {display_rate*100:.2f}%) -> IIS: {iis:.6f}")
         return 0
 
     except ValueError as e:
@@ -111,4 +120,4 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main())  
